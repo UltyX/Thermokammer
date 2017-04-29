@@ -20,8 +20,8 @@ public:
 	~Serial();
 	
 	
-	void test_send_string();
-	void test_recive();
+	void send_string();
+	void recive_string();
 	
 
 

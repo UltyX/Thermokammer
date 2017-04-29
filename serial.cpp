@@ -56,7 +56,7 @@ Serial::Serial(){
 	tcsetattr(uart0_filestream, TCSANOW, &options);
 }
 
-void test_send_string(){
+void Serial::send_string(){
         //----- TX BYTES -----
 	unsigned char tx_buffer[20];
 	
@@ -72,7 +72,7 @@ void test_send_string(){
 }
 
 
-void test_recive(){
+void Serial::recive_string(){
         //----- CHECK FOR ANY RX BYTES -----
 	if (uart0_filestream != -1)
 	{
