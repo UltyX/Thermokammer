@@ -1,24 +1,33 @@
 #ifndef _PID_H_
 #define _PID_H_
 
-class PIDImpl;
+// Source: https://gist.github.com/bradley219/5373998
+
+
 class PID
 {
+	private:
+        double _dt;				// dt -  loop interval time
+        double _max;			// max - maximum value of manipulated variable
+        double _min;			// min - minimum value of manipulated variable
+        double _Kp;				// Kp -  proportional gain
+        double _Kd;				// Kd -  derivative gain
+        double _Ki;				// Ki -  Integral gain
+        double _pre_error;		// soll - ist der letzten berechnung, wird für die ableitung des dt teils verwendet
+		double _integral;
+	
+	
     public:
-        // Kp -  proportional gain
-        // Ki -  Integral gain
-        // Kd -  derivative gain
-        // dt -  loop interval time
-        // max - maximum value of manipulated variable
-        // min - minimum value of manipulated variable
+		
         PID( double dt, double max, double min, double Kp, double Kd, double Ki );
-
+		
         // Returns the manipulated variable given a setpoint and current process value
         double calculate( double setpoint, double pv );
         ~PID();
 
-    private:
-        PIDImpl *pimpl;
+    
+
+
 };
 
 #endif

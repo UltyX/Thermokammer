@@ -1,5 +1,5 @@
-#ifndef serial
-#define serial
+#ifndef _serial__
+#define _serial__
 
 #include <stdio.h>
 #include <unistd.h>			//Used for UART
