@@ -5,7 +5,9 @@
 
 
 Serial::Serial(){
-
+    
+    uart0_filestream = -1;
+    
         //-------------------------
 	//----- SETUP USART 0 -----
 	//-------------------------
@@ -26,10 +28,10 @@ Serial::Serial(){
 
 
 // Achim // das no delay geht nicht so wie ich es mit windows getestet habe. geht warscheinlich nur in einer dauer while schleife	
-//      uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/write mode
+        uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/write mode
 
 
-        uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY );  //Open in read/write mode
+  //      uart0_filestream = open("/dev/ttyAMA0", O_RDWR | O_NOCTTY );  //Open in read/write mode
 	if (uart0_filestream == -1)
 	{
 		//ERROR - CAN'T OPEN SERIAL PORT
@@ -82,7 +84,8 @@ void Serial::recive_string(){
 		if (rx_length < 0)
 		{
 			//An error occured (will occur if there are no bytes)
-                       printf("Read Error");
+                       //printf("Read Error");
+                 ;
 		}
 		else if (rx_length == 0)
 		{

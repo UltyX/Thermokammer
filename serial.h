@@ -11,7 +11,7 @@
 class Serial{
 
 private:
-	int uart0_filestream = -1;
+	int uart0_filestream;
 
 public:
 	
