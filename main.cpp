@@ -18,6 +18,8 @@ using namespace std;
 
 int main() {
 
+    double messdauer = 60*5;    // messdauer in Sekunden
+
     vector<float> time_vec;     // Zeitvector
     vector<float> voltage_vec;  // Spannungsvector
 
@@ -34,22 +36,23 @@ int main() {
     // Zeit vars
 
 
-    for (int i = 0; i<6; i++){
-        //gpio_0.set_output_voltage(0, i);
-        //my_serial_instance.recive_string();
+    do{
+        //gpio_0.set_output_voltage(0, i);                          // Ausgansspannung auf DA Kanal 0 setzen
+        //my_serial_instance.recive_string();                       // RS232 String auslesen
+
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );          // Messwert in vector abspeichern
         end = std::chrono::system_clock::now();                     // Endzeitpunkt setzen
         elapsed_seconds = end-start;                                // Differenz bilden
         time_vec.push_back( elapsed_seconds.count() );              // Zeit in vector abspeichern
 
-    }
+    }while( time_vec.back() < messdauer);                           // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist.
     
     
     
     
 
 
-    write_data_to_csv(time_vec, voltage_vec );      // Daten in CSV Datei schreiben
+    write_data_to_csv(time_vec, voltage_vec );      // Messdaten in CSV Datei schreiben
     
     
 
