@@ -1,6 +1,6 @@
 
 #include "serial.h"			// header file
-
+#include <string>
 
 
 
@@ -74,9 +74,10 @@ void Serial::send_string(){
 }
 
 
-void Serial::recive_string(){
+bool Serial::recive_string(){
         //----- CHECK FOR ANY RX BYTES -----
-	if (uart0_filestream != -1)
+	std::string nachricht_string = "";
+        if (uart0_filestream != -1)
 	{
 		// Read up to 255 characters from the port if they are there
 		unsigned char rx_buffer[256];
@@ -96,9 +97,12 @@ void Serial::recive_string(){
 		{
 			//Bytes received
 			rx_buffer[rx_length] = '\0';
+                        //nachricht_string = rx_buffer;
 			printf("%i bytes read : %s\n", rx_length, rx_buffer);
+                        return true;
 		}
 	}
+        return false;
 }
 
 

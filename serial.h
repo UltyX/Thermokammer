@@ -21,7 +21,7 @@ public:
 	
 	
 	void send_string();
-	void recive_string();
+	bool recive_string();
 	
 
 

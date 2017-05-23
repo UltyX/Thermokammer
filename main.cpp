@@ -14,18 +14,18 @@
 using namespace std;
 
 
-
+void write_data_to_csv(vector<float> time, vector<float> voltage);
 
 int main() {
 
-    double messdauer = 60*5;    // messdauer in Sekunden
-
-    vector<float> time_vec;     // Zeitvector
-    vector<float> voltage_vec;  // Spannungsvector
+    double messdauer 		= 60*60*24; // messdauer in Sekunden
+    string seriel_nachricht 	= "";	 // Nachrit über das RS232 Kabel
+    vector<float> time_vec;     	 // Zeitvector
+    vector<float> voltage_vec;  	 // Spannungsvector
 
     //PID pid_0 		= PID(0.1, 100, -100, 0.1, 0.01, 0.5);                  // PID-Regler.
     ADDA_GPIO gpio_0 		= ADDA_GPIO();                    			// AD und DA wandler Bord Klasse die über die bcm2835 und die beispiel Funktionen auf das Board zugreift.
-    //Serial my_serial_instance = Serial();						// RS232 Connection //    while(1){my_serial_instance.recive_string();}
+    Serial my_serial_instance   = Serial();						// RS232 Connection //    while(1){my_serial_instance.recive_string();}
 
 
 
@@ -38,14 +38,18 @@ int main() {
 
     do{
         //gpio_0.set_output_voltage(0, i);                          // Ausgansspannung auf DA Kanal 0 setzen
-        //my_serial_instance.recive_string();                       // RS232 String auslesen
+//        seriel_nachricht = my_serial_instance.recive_string();      // RS232 String auslesen
+
+
+        
 
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );          // Messwert in vector abspeichern
         end = std::chrono::system_clock::now();                     // Endzeitpunkt setzen
-        elapsed_seconds = end-start;                                // Differenz bilden
+        elapsed_seconds = end - start;                              // Differenz bilden
         time_vec.push_back( elapsed_seconds.count() );              // Zeit in vector abspeichern
-
-    }while( time_vec.back() < messdauer);                           // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist.
+        std::cout << voltage_vec.back() << " V" << std::endl;
+//        std::cout << seriel_nachricht;
+    }while( ( time_vec.back() < messdauer) && !(my_serial_instance.recive_string() ) ); // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist.
     
     
     
