@@ -7,10 +7,10 @@
 
 using namespace std;
 
-PID::PID( double dt, double max, double min, double Kp, double Kd, double Ki )
+PID::PID(  double max, double min, double Kp, double Kd, double Ki )
 {
     
-    _dt 		= dt;
+
     _max		= max;
     _min		= min;
     _Kp			= Kp;
@@ -22,21 +22,21 @@ PID::PID( double dt, double max, double min, double Kp, double Kd, double Ki )
 }
 
 
-double PID::calculate( double setpoint, double pv )
+double PID::calculate( double soll, double ist, double dt)
 {
     
     // Calculate error      error = soll - ist
-    double error = setpoint - pv;
+    double error = soll - ist;
 
     // Proportional term
     double Pout = _Kp * error;
 
     // Integral term
-    _integral += error * _dt;
+    _integral += error * dt;
     double Iout = _Ki * _integral;
 
     // Derivative term
-    double derivative = (error - _pre_error) / _dt;
+    double derivative = (error - _pre_error) / dt;
     double Dout = _Kd * derivative;
 
     // Calculate total output

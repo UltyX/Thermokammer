@@ -7,7 +7,7 @@
 class PID
 {
 	private:
-        double _dt;				// dt -  loop interval time
+
         double _max;			// max - maximum value of manipulated variable
         double _min;			// min - minimum value of manipulated variable
         double _Kp;				// Kp -  proportional gain
@@ -19,10 +19,10 @@ class PID
 	
     public:
 		
-        PID( double dt, double max, double min, double Kp, double Kd, double Ki );
+        PID(double max, double min, double Kp, double Kd, double Ki );
 		
         // Returns the manipulated variable given a setpoint and current process value
-        double calculate( double setpoint, double pv );
+        double calculate(double soll, double ist , double dt);
         ~PID();
 
     
