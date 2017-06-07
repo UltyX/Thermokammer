@@ -97,8 +97,9 @@ bool Serial::recive_string(){
 		{
 			//Bytes received
 			rx_buffer[rx_length] = '\0';
-                        //nachricht_string = rx_buffer;
-			printf("%i bytes read : %s\n", rx_length, rx_buffer);
+                        nachricht_string = std::string(reinterpret_cast<char*>(rx_buffer), 256);
+                        printf(nachricht_string);
+                        //printf("%i bytes read : %s\n", rx_length, rx_buffer);
                         return true;
 		}
 	}
