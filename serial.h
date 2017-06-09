@@ -5,7 +5,7 @@
 #include <unistd.h>			//Used for UART
 #include <fcntl.h>			//Used for UART
 #include <termios.h>		//Used for UART
-
+#include <string>
 
 
 class Serial{
@@ -21,7 +21,7 @@ public:
 	
 	
 	void send_string();
-	bool recive_string();
+        std::string recive_string();
 	
 
 

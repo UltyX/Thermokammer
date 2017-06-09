@@ -14,7 +14,11 @@
 using namespace std;
 
 
-void write_data_to_csv(vector<float> time, vector<float> voltage);
+void write_data_to_csv(vector<float> time, vector<float> voltage, vector<float> temperature);
+
+void set_peltie(        ADDA_GPIO* gpio_0  ,float voltage_on = 0.0);
+void set_heating_pads(  ADDA_GPIO* gpio_0  ,float voltage_on = 0.0);
+float convert_voltage_to_temperature(float voltage_i);
 
 int main() {
     float target_temperature    = 30.0;
@@ -41,7 +45,7 @@ int main() {
 
     do{
 
-//        seriel_nachricht = my_serial_instance.recive_string();      // RS232 String auslesen
+        seriel_nachricht = my_serial_instance.recive_string();      // RS232 String auslesen
 
 
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );                                  // Spannungs - Messwert in vector abspeichern
@@ -49,7 +53,7 @@ int main() {
 
         dt          = std::chrono::system_clock::now() - dt_stamp;
         dt_stamp    = std::chrono::system_clock::now();
-        set_heating_pads( pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() ) );
+        set_heating_pads( &gpio_0  , pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() ) );
 
 
         elapsed_seconds = dt_stamp - start;                                                     // Differenz bilden
@@ -59,21 +63,23 @@ int main() {
 
 
 
-    }while( ( time_vec.back() < messdauer) && !(my_serial_instance.recive_string() ) ); // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist.
+    }while( ( time_vec.back() < messdauer) && (seriel_nachricht=="" ) ); // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist.
     
     
     
     
 
 
-    write_data_to_csv(time_vec, voltage_vec );      // Messdaten in CSV Datei schreiben
+    write_data_to_csv(time_vec, voltage_vec, temperature_vec );      // Messdaten in CSV Datei schreiben
     
     
 
     return 0;
 }
 
-void set_peltie(float voltage_on = 0.0){
+
+
+void set_peltie(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
 
     if (voltage_on > 5.0){
         voltage_on = 5.0;
@@ -82,11 +88,11 @@ void set_peltie(float voltage_on = 0.0){
         voltage_on = 0.0;
     }
 
-    gpio_0.set_output_voltage(1, voltage_on);
+    gpio_0->set_output_voltage(1, voltage_on);
 
 }
 
-void set_heating_pads(float voltage_on = 0.0){
+void set_heating_pads(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
 
     if (voltage_on > 5.0){
         voltage_on = 5.0;
@@ -95,16 +101,16 @@ void set_heating_pads(float voltage_on = 0.0){
         voltage_on = 0.0;
     }
 
-    gpio_0.set_output_voltage(0, voltage_on);
+    gpio_0->set_output_voltage(0, voltage_on);
 
 }
 
-void convert_voltage_to_temperature(float voltage_i){
+float convert_voltage_to_temperature(float voltage_i){
     return 3.04948162555188+16,1414944544373*voltage_i;
 }
 
 // Erhällt 2 Vectornen und speichert diese als Komma Tabelle ab. Richtet sich dabei nach der länge des Zeitvectors
-void write_data_to_csv(vector<float> time, vector<float> voltage) {
+void write_data_to_csv(vector<float> time, vector<float> voltage, vector<float> temperature ) {
 
     int length = time.size();
     ofstream outfile;
@@ -119,6 +125,8 @@ void write_data_to_csv(vector<float> time, vector<float> voltage) {
         outfile << time[i];
         outfile << ", ";
         outfile << voltage[i];
+        outfile << ", ";
+        outfile << temperature[i];
         outfile << endl;
     }
 
