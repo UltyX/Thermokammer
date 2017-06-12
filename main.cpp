@@ -28,7 +28,7 @@ int main() {
     vector<float> voltage_vec;  	 // Spannungsvector
     vector<float> temperature_vec;  	 // Temperaturvector
 
-    PID pid_0    		= PID( 5, 0, 0.1, 0.01, 0.5);                           // PID-Regler.
+    PID pid_0    		= PID( 5, 0, 0.0, 0.0, 1/90000.0);                      // PID-Regler. BOP
     ADDA_GPIO gpio_0 		= ADDA_GPIO();                    			// AD und DA wandler Bord Klasse die über die bcm2835 und die beispiel Funktionen auf das Board zugreift.
     Serial my_serial_instance   = Serial();						// RS232 Connection //    while(1){my_serial_instance.recive_string();}
 
