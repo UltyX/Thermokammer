@@ -28,6 +28,7 @@ int main() {
     double messdauer 		= 60*60*24; // messdauer in Sekunden
 
     string seriel_nachricht 	= "";	 // Nachrit über das RS232 Kabel
+    string send_seriel_nachricht= "";	 // Nachrit über das RS232 Kabel
     int soll_temperatur_index   = 0;
     
 
@@ -88,6 +89,9 @@ int main() {
 
         elapsed_seconds = dt_stamp - start;                                                     // Differenz bilden
         time_vec.push_back( elapsed_seconds.count() );                                          // Zeit in vector abspeichern
+
+        send_seriel_nachricht = std::to_string(time_vec.back()) + " Sec. " + std::to_string( temperature_vec.back() ) + " °C \n";
+        my_serial_instance.send_string(send_seriel_nachricht);
 
         std::cout << time_vec.back()<< " Sec.   " << voltage_vec.back() << " V   "<< temperature_vec.back() << " °C  " 
                   << r_pad_voltage_info << " V U_pads " << peltie_voltage_info << " V U_peltie " <<std::endl;

@@ -5,6 +5,7 @@
 #include <unistd.h>			//Used for UART
 #include <fcntl.h>			//Used for UART
 #include <termios.h>		//Used for UART
+#include <cstring>
 #include <string>
 
 
@@ -20,7 +21,7 @@ public:
 	~Serial();
 	
 	
-	void send_string();
+	void send_string(std::string msg_i);
         std::string recive_string();
 	
 

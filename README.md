@@ -14,15 +14,6 @@ Stop the serial-getty process which may block the serial input by running  "sudo
 
 Run the executable by running "sudo ./app".
 
-# RS232 Commands
-Set Target temperature:
-
-echo temp=40.5 > COM1 
-
-
-Stop the program:
-
-echo ende > COM1 
 
 # Troubleshooting:
 

@@ -58,14 +58,14 @@ Serial::Serial(){
 	tcsetattr(uart0_filestream, TCSANOW, &options);
 }
 
-void Serial::send_string(){
+void Serial::send_string( std::string msg_i ){
         //----- TX BYTES -----
-	unsigned char tx_buffer[20];
-	
+	unsigned char *tx_buffer = new unsigned char[ msg_i.length()+1 ];  // Konvertierung von eingangsstring nach 
+	std::strcpy( (char*) tx_buffer, msg_i.c_str()  );                  // unsigned char *tx_buffer[] der länge des strings +1
 	
 	if (uart0_filestream != -1)
 	{
-		int count = write(uart0_filestream, &tx_buffer[0],12  );		//Filestream, bytes to write, number of bytes to write
+		int count = write(uart0_filestream, &tx_buffer[0], msg_i.length()  );		//Filestream, bytes to write, number of bytes to write
 		if (count < 0)
 		{
 			printf("UART TX error\n");
