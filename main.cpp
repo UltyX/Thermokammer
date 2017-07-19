@@ -20,11 +20,11 @@ void set_peltie(        ADDA_GPIO* gpio_0  ,float voltage_on);
 void set_heating_pads(  ADDA_GPIO* gpio_0  ,float voltage_on);
 float convert_voltage_to_temperature(float voltage_i);
 
-float r_pad_voltage_info = 0.0;
-float peltie_voltage_info = 0.0;
+float r_pad_voltage_info  = -1.0; //
+float peltie_voltage_info = -1.0; //
 
 int main() {
-    float target_temperature    = 30.0;
+    float target_temperature    = 30.0;     // soll temperatur
     double messdauer 		= 60*60*24; // messdauer in Sekunden
 
     string seriel_nachricht 	= "";	 // Nachrit über das RS232 Kabel
@@ -59,34 +59,34 @@ int main() {
 
         soll_temperatur_index = seriel_nachricht.find("temp=");     // Nachricht nach soll temperatur angabe durchsuchen
         if (soll_temperatur_index != std::string::npos){            // Neue Soll-Temperatur empfangen
-            std::cout << seriel_nachricht << std::endl;
-            std::cout << seriel_nachricht.substr(soll_temperatur_index+5 ) << std::endl;
+            std::cout << seriel_nachricht << std::endl; //debug
+            std::cout << seriel_nachricht.substr(soll_temperatur_index+5 ) << std::endl; //debug
             target_temperature = std::stof( seriel_nachricht.substr( soll_temperatur_index+5 )  ); // Neue Temperatur setzen. Punkt als komma verwenden !
-            std::cout << "target_temperature"<<target_temperature << " °C " << std::endl;
+            std::cout << "target_temperature"<<target_temperature << " °C " << std::endl; //debug
         }
         
 
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );                                  // Spannungs - Messwert in vector abspeichern
         temperature_vec.push_back( convert_voltage_to_temperature( voltage_vec.back() ) );  // Temperatur- Messwert in vector abspeichern
 
-        dt          = std::chrono::system_clock::now() - dt_stamp;
-        dt_stamp    = std::chrono::system_clock::now();
+        dt          = std::chrono::system_clock::now() - dt_stamp;  // dt für regelung
+        dt_stamp    = std::chrono::system_clock::now();             // zeitpunkt für nächste dt berechnung merken
 
-        if (false){
+        if (false){//PID
 
-            temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() );  // für PID regelung
+            temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() );  // aktuellen regelwert berechnen
 
             if ( temp_regelwert > 0.0  ){                           // wenn regelgröße positiv
-                set_heating_pads( &gpio_0  , temp_regelwert );      // wärme pads
-                set_peltie( &gpio_0  , 0.0 );
+                set_heating_pads( &gpio_0  , temp_regelwert );      // wärme pads on
+                set_peltie( &gpio_0  , 0.0 );                       // peltie off
             }
             else{                                                   // wenn negativ
-                set_peltie( &gpio_0  , (-1*temp_regelwert) );       // peltie
-                set_heating_pads( &gpio_0  , 0.0 );
+                set_peltie( &gpio_0  , (-1*temp_regelwert) );       // peltie on
+                set_heating_pads( &gpio_0  , 0.0 );                 // wärme pads off
             }
 
         }
-        else{
+        else{//2 Punkt
 
             if ( temperature_vec.back() < target_temperature ){    // 2 Punkt Regelung/ Ein
                 set_heating_pads( &gpio_0  , 5.0 );
@@ -105,7 +105,7 @@ int main() {
         my_serial_instance.send_string(send_seriel_nachricht);
 
         std::cout << time_vec.back()<< " Sec.   " << voltage_vec.back() << " V   "<< temperature_vec.back() << " °C  " 
-                  << r_pad_voltage_info << " V U_pads " << peltie_voltage_info << " V U_peltie " <<std::endl;
+                  << r_pad_voltage_info << " V U_pads " << peltie_voltage_info << " V U_peltie "<< temp_regelwert << " V U_regelwert " <<std::endl;
 
 
     // Als sainity check, soll bei t >= 80.0°C abbrechen 
@@ -137,6 +137,9 @@ void set_peltie(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
     else if (voltage_on < 0.0){
         voltage_on = 0.0;
     }
+    if (peltie_voltage_info == voltage_on){ // neu setzen des gleichen wertes überspringen
+        return;
+    }
 
     gpio_0->set_output_voltage(0, voltage_on);
     peltie_voltage_info = voltage_on;
@@ -149,6 +152,9 @@ void set_heating_pads(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
     }
     else if (voltage_on < 0.0){
         voltage_on = 0.0;
+    }
+    if (r_pad_voltage_info == voltage_on){ // neu setzen des gleichen wertes überspringen
+        return;
     }
 
     gpio_0->set_output_voltage(1, voltage_on);

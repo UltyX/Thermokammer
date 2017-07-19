@@ -7,9 +7,14 @@
 #define     RST     RPI_GPIO_P1_12          //P1
 
 
+//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
+#include <chrono>
+#include <thread>
 void  ADDA_GPIO::bsp_DelayUS(uint64_t micros)
 {
-        bcm2835_delayMicroseconds (micros);
+        //bcm2835_delayMicroseconds (micros);
+
+        std::this_thread::sleep_for(std::chrono::microseconds(micros));
 }
 
 
