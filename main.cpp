@@ -36,7 +36,7 @@ int main() {
     vector<float> voltage_vec;  	 // Spannungsvector
     vector<float> temperature_vec;  	 // Temperaturvector
 
-    PID pid_0    		= PID( 5, 0, 0.0, 0.0, 1/90000.0);                      // PID-Regler. BOP
+    PID pid_0    		= PID( 5, -5, 0.0, 0.0, 1/90000.0);                     // PID-Regler. BOP  -5 V bis 5 V | p=0 d=0 i=1/90000
     ADDA_GPIO gpio_0 		= ADDA_GPIO();                    			// AD und DA wandler Bord Klasse die über die bcm2835 und die beispiel Funktionen auf das Board zugreift.
     Serial my_serial_instance   = Serial();						// RS232 Connection //    while(1){my_serial_instance.recive_string();}
 
@@ -73,10 +73,21 @@ int main() {
         dt_stamp    = std::chrono::system_clock::now();
 
         if (false){
+
             temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() );  // für PID regelung
-            set_heating_pads( &gpio_0  , temp_regelwert );                                              // für PID regelung 
+
+            if ( temp_regelwert > 0.0  ){                           // wenn regelgröße positiv
+                set_heating_pads( &gpio_0  , temp_regelwert );      // wärme pads
+                set_peltie( &gpio_0  , 0.0 );
+            }
+            else{                                                   // wenn negativ
+                set_peltie( &gpio_0  , (-1*temp_regelwert) );       // peltie
+                set_heating_pads( &gpio_0  , 0.0 );
+            }
+
         }
         else{
+
             if ( temperature_vec.back() < target_temperature ){    // 2 Punkt Regelung/ Ein
                 set_heating_pads( &gpio_0  , 5.0 );
                 set_peltie( &gpio_0  , 0.0 );
