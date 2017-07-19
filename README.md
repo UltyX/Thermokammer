@@ -17,8 +17,6 @@ Run the executable by running "sudo ./app".
 
 # RS232 Commands Konsole
 
-Konsole:
-
 Initailize:
 
 mode COM1 BAUD=9600 PARITY=n DATA=8
@@ -46,6 +44,7 @@ $port.WriteLine(“temp=40”)
 Read Current temperature:
 
 $port.DiscardInBuffer() 
+
 $port.ReadLine()
 
 Stop the program:

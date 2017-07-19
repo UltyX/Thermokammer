@@ -8,6 +8,7 @@
 #include <cstring>
 #include <string>
 
+// source http://www.raspberry-projects.com/pi/programming-in-c/uart-serial-port/using-the-uart
 
 class Serial{
 
