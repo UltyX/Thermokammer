@@ -67,11 +67,13 @@ int main() {
             std::cout << "target_temperature"<<target_temperature << " °C " << std::endl; //debug
         }
         
-        if (seriel_nachricht.find("pid") != std::string::npos){    // auf 2 pid regelung umstellen
+        if (seriel_nachricht.find("pid") != std::string::npos){    // auf pid regelung umstellen
             pid_regelung = true;
+            std::cout << "pid" << std::endl; //debug
         }
         if (seriel_nachricht.find("2p") != std::string::npos){     // auf 2 punkt regelung umstellen
             pid_regelung = false;
+            std::cout << "2p" << std::endl; //debug
         }
 
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );                                  // Spannungs - Messwert in vector abspeichern
@@ -81,7 +83,6 @@ int main() {
         dt_stamp    = std::chrono::system_clock::now();             // zeitpunkt für nächste dt berechnung merken
 
         temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),  dt.count() );  // aktuellen regelwert berechnen
-//      temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),  dt.count() );  // aktuellen regelwert berechnen
 
         if (pid_regelung){      //PID
 
