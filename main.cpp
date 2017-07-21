@@ -27,6 +27,8 @@ int main() {
     float target_temperature    = 30.0;     // soll temperatur
     double messdauer 		= 60*60*24; // messdauer in Sekunden
 
+    bool pid_regelung           = true;
+
     string seriel_nachricht 	= "";	 // Nachrit über das RS232 Kabel
     string send_seriel_nachricht= "";	 // Nachrit über das RS232 Kabel
     int soll_temperatur_index   = 0;
@@ -36,7 +38,7 @@ int main() {
     vector<float> voltage_vec;  	 // Spannungsvector
     vector<float> temperature_vec;  	 // Temperaturvector
 
-    PID pid_0    		= PID( 5, -5, 0.0, 0.0, 1/90000.0);                     // PID-Regler. BOP  -5 V bis 5 V | p=0 d=0 i=1/90000
+    PID pid_0    		= PID( 5, -5, 14.29, 40.45 , 1/1222.1);                 // PID-Regler. BOP  -5 V bis 5 V | p=0 d=0 i=1/90000
     ADDA_GPIO gpio_0 		= ADDA_GPIO();                    			// AD und DA wandler Bord Klasse die über die bcm2835 und die beispiel Funktionen auf das Board zugreift.
     Serial my_serial_instance   = Serial();						// RS232 Connection //    while(1){my_serial_instance.recive_string();}
 
@@ -65,6 +67,12 @@ int main() {
             std::cout << "target_temperature"<<target_temperature << " °C " << std::endl; //debug
         }
         
+        if (seriel_nachricht.find("pid") != std::string::npos){    // auf 2 pid regelung umstellen
+            pid_regelung = true;
+        }
+        if (seriel_nachricht.find("2p") != std::string::npos){     // auf 2 punkt regelung umstellen
+            pid_regelung = false;
+        }
 
         voltage_vec.push_back( gpio_0.get_AD_voltage(3) );                                  // Spannungs - Messwert in vector abspeichern
         temperature_vec.push_back( convert_voltage_to_temperature( voltage_vec.back() ) );  // Temperatur- Messwert in vector abspeichern
@@ -72,9 +80,10 @@ int main() {
         dt          = std::chrono::system_clock::now() - dt_stamp;  // dt für regelung
         dt_stamp    = std::chrono::system_clock::now();             // zeitpunkt für nächste dt berechnung merken
 
-        if (false){//PID
+        temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),  dt.count() );  // aktuellen regelwert berechnen
+//      temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),  dt.count() );  // aktuellen regelwert berechnen
 
-            temp_regelwert = pid_0.calculate( target_temperature, temperature_vec.back(),dt.count() );  // aktuellen regelwert berechnen
+        if (pid_regelung){      //PID
 
             if ( temp_regelwert > 0.0  ){                           // wenn regelgröße positiv
                 set_heating_pads( &gpio_0  , temp_regelwert );      // wärme pads on
@@ -86,7 +95,7 @@ int main() {
             }
 
         }
-        else{//2 Punkt
+        else{                 //2 Punkt
 
             if ( temperature_vec.back() < target_temperature ){    // 2 Punkt Regelung/ Ein
                 set_heating_pads( &gpio_0  , 5.0 );
@@ -143,6 +152,7 @@ void set_peltie(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
 
     gpio_0->set_output_voltage(0, voltage_on);
     peltie_voltage_info = voltage_on;
+    std::cout << "set_peltie "<< voltage_on<< " V" << std::endl; //debug
 }
 
 void set_heating_pads(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
@@ -159,6 +169,7 @@ void set_heating_pads(ADDA_GPIO* gpio_0  ,float voltage_on = 0.0){
 
     gpio_0->set_output_voltage(1, voltage_on);
     r_pad_voltage_info = voltage_on;
+    std::cout << "set_heat_pads "<< voltage_on<< " V" << std::endl; //debug
 }
 
 float convert_voltage_to_temperature(float voltage_i){

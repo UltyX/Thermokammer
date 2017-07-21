@@ -8,13 +8,13 @@
 
 
 //https://stackoverflow.com/questions/4184468/sleep-for-milliseconds
-#include <chrono>
-#include <thread>
+//#include <chrono>
+//#include <thread>
 void  ADDA_GPIO::bsp_DelayUS(uint64_t micros)
 {
-        //bcm2835_delayMicroseconds (micros);
+        bcm2835_delayMicroseconds (micros);
 
-        std::this_thread::sleep_for(std::chrono::microseconds(micros));
+        //std::this_thread::sleep_for(std::chrono::microseconds(micros));
 }
 
 
