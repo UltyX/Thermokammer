@@ -178,9 +178,9 @@ float convert_voltage_to_temperature(float voltage_i){
 }
 
 // Erhällt 2 Vectornen und speichert diese als Komma Tabelle ab. Richtet sich dabei nach der länge des Zeitvectors
-void write_data_to_csv(vector<float> time, vector<float> voltage, vector<float> temperature ) {
+void write_data_to_csv(vector<float> time_in, vector<float> voltage, vector<float> temperature ) {
 
-    int length = time.size();
+    int length = time_in.size();
     ofstream outfile;
     outfile.open("result.csv",fstream::out | fstream::trunc);
 
@@ -190,7 +190,7 @@ void write_data_to_csv(vector<float> time, vector<float> voltage, vector<float> 
     for (int i=0; i< length; i++ )
     {
 
-        outfile << time[i];
+        outfile << time_in[i];
         outfile << ", ";
         outfile << voltage[i];
         outfile << ", ";
