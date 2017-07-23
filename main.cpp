@@ -14,7 +14,7 @@
 using namespace std;
 
 
-void write_data_to_csv(vector<float> time, vector<float> voltage, vector<float> temperature);
+void write_data_to_csv(vector<float> time_in, vector<float> voltage, vector<float> temperature);
 
 void set_peltie(        ADDA_GPIO* gpio_0  ,float voltage_on);
 void set_heating_pads(  ADDA_GPIO* gpio_0  ,float voltage_on);
