@@ -121,7 +121,7 @@ int main() {
     // Als sainity check, soll bei t >= 80.0°C abbrechen 
     // Vergleich die zuletzt gemessene zeit mit der Gesammtmessdauer und brich ab wenn diese größer ist, oder das ende signal gesendet wurde.
 
-    }while( ( time_vec.back() < messdauer) && (seriel_nachricht.find("ende") == std::string::npos ) && ( temperature_vec.back() < 80.0 ) ); 
+    }while(  (seriel_nachricht.find("ende") == std::string::npos ) && ( temperature_vec.back() < 100.0 ) ); // ( time_vec.back() < messdauer) &&
 
     
     set_heating_pads( &gpio_0  , 0.0 );    // Program ende ausgabe abschalten
