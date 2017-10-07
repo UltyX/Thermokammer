@@ -33,6 +33,16 @@ double PID::calculate( double soll, double ist, double dt)
 
     // Integral term
     _integral += error * dt;
+
+
+    // Restrict integral to max/min
+    if( _integral > _max )
+        _integral = _max;
+    else if( _integral < _min )
+        _integral = _min;
+
+
+
     double Iout = _Ki * _integral;
 
     // Derivative term
